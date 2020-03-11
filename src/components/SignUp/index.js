@@ -4,6 +4,7 @@ import { compose } from "recompose";
 
 import { withFirebase } from "../Firebase";
 import * as ROUTES from "../../constants/routes";
+import * as ROLES from "../../constants/roles";
 
 const SignUpPage = () => (
   <div>
@@ -17,6 +18,7 @@ const INITIAL_STATE = {
   email: "",
   passwordOne: "",
   passwordTwo: "",
+  isAdmin: false,
   error: null
 };
 
@@ -29,13 +31,19 @@ class SignUpFormBase extends Component {
 
   onSubmit = async event => {
     event.preventDefault();
-    const { username, email, passwordOne } = this.state;
+    const { username, email, passwordOne, isAdmin } = this.state;
+    const roles = {};
+    if (isAdmin) {
+      roles[ROLES.ADMIN] = ROLES.ADMIN;
+    }
+
     this.props.firebase
       .doCreateUserWithEmailAndPassword(email, passwordOne)
       .then(authUser => {
+        console.log(authUser);
         return this.props.firebase
           .user(authUser.user.uid)
-          .set({ username, email });
+          .set({ username, email, roles });
       })
       .then(() => {
         this.setState({ ...INITIAL_STATE });
@@ -50,8 +58,18 @@ class SignUpFormBase extends Component {
     this.setState({ [event.target.name]: event.target.value });
   };
 
+  onChangeCheckbox = event => {
+    this.setState({ [event.target.name]: event.target.checked });
+  };
   render() {
-    const { username, email, passwordOne, passwordTwo, error } = this.state;
+    const {
+      username,
+      email,
+      passwordOne,
+      passwordTwo,
+      isAdmin,
+      error
+    } = this.state;
 
     const isInvalid =
       passwordOne !== passwordTwo ||
@@ -60,6 +78,15 @@ class SignUpFormBase extends Component {
       username === "";
     return (
       <form onSubmit={this.onSubmit}>
+        <label>
+          Admin:
+          <input
+            type="checkbox"
+            name="isAdmin"
+            checked={isAdmin}
+            onChange={this.onChangeCheckbox}
+          />
+        </label>
         <input
           type="text"
           name="username"
