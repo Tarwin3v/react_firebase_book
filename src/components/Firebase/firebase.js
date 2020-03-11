@@ -23,6 +23,8 @@ class Firebase {
     this.googleProvider = new app.auth.GoogleAuthProvider().setCustomParameters(
       { prompt: "select_account" }
     );
+    this.facebookProvider = new app.auth.FacebookAuthProvider();
+    this.twitterProvider = new app.auth.TwitterAuthProvider();
   }
 
   //@x AUTH API
@@ -33,7 +35,11 @@ class Firebase {
   doSignInWithEmailAndPassword = (email, password) =>
     this.auth.signInWithEmailAndPassword(email, password);
 
+  //@x AUTH API - Social Networks SignIn
+
   doSignInWithGoogle = () => this.auth.signInWithPopup(this.googleProvider);
+  doSignInWithFacebook = () => this.auth.signInWithPopup(this.facebookProvider);
+  doSignInWithTwitter = () => this.auth.signInWithPopup(this.twitterProvider);
 
   doSignOut = () => this.auth.signOut();
 
