@@ -18,10 +18,6 @@ const SIGN_IN_METHODS = [
   {
     id: "facebook.com",
     provider: "facebookProvider"
-  },
-  {
-    id: "twitter.com",
-    provider: "twitterProvider"
   }
 ];
 
@@ -75,7 +71,7 @@ class LoginManagementBase extends Component {
     );
 
     this.props.firebase.auth.currentUser
-      .linkAndRetrieveDataWithCredential(credential)
+      .linkWithCredential(credential)
       .then(this.fetchSignInMethods)
       .catch(error => this.setState({ error }));
   };
